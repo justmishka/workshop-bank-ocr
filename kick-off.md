@@ -197,19 +197,30 @@ _As a user, I want the system to attempt to fix errors so that I recover as many
 
 **Total: 7 story points** (4 core + 3 stretch)
 
-### Sprint Backlog
+**Story 5: Web UI**
+_As a user, I want a web interface so that I can paste or upload OCR text and see parsed results visually._
 
-**Sprint Goal:** "Parse OCR files into validated account numbers with error reporting"
+**Acceptance Criteria:**
+- Given the web UI, When I paste OCR text into the input area, Then I see parsed account numbers with validation status
+- Given the web UI, When I upload an OCR file, Then it is processed and results are displayed
+- Given the web UI, When results include ERR or ILL accounts, Then they are visually highlighted differently from valid accounts
 
-| Story | Points | Priority | DoD Categories |
-|-------|--------|----------|----------------|
-| S1: Parse OCR | 2 | Must | Sage + Dex + Rex |
-| S2: Validate checksum | 1 | Must | Sage + Dex + Rex |
-| S3: Format output | 1 | Must | Sage + Dex + Rex |
-| S4: Error correction | 3 | Stretch | Sage + Dex + Rex |
+---
 
-**All stories committed.** S4 is stretch — if time runs out, it's deferred without failing the Sprint Goal.
+## Sprint Backlog
+
+**Sprint Goal:** "Parse OCR files into validated account numbers with error reporting and web UI"
+
+| Story | Jira | Points | Priority | DoD Categories |
+|-------|------|--------|----------|----------------|
+| S1: Parse OCR | WRKSHP-2 | 2 | Must | Sage + Dex + Rex |
+| S2: Validate checksum | WRKSHP-3 | 1 | Must | Sage + Dex + Rex |
+| S3: Format output | WRKSHP-4 | 1 | Must | Sage + Dex + Rex |
+| S4: Error correction | WRKSHP-5 | 3 | Stretch | Sage + Dex + Rex |
+| S5: Web UI | WRKSHP-6 | 3 | Must | Sage + Dex + Rex + Luna |
+
+**Total: 10 story points.** S1-S3 + S5 are committed (7 points). S4 is stretch.
 
 ### Rex's Summary
 
-> Sprint 1 for Bank OCR is active. Sprint Goal: "Parse OCR files into validated account numbers with error reporting." 4 stories, 7 points. Finn starts with S1 (parser). Go.
+> Sprint 1 for Bank OCR is active. Sprint Goal: "Parse OCR files into validated account numbers with error reporting and web UI." 5 stories, 10 points. Finn starts with S1 (parser), Mia handles S5 (UI). Go.
