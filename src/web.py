@@ -2,14 +2,30 @@
 import http.server
 import json
 import os
-from src.parser import parse_file
+from src.parser import parse_file, validate_ocr_input
 from src.checksum import is_valid
 from src.formatter import classify_account
 
 
-def process_ocr(ocr_text: str) -> list[dict]:
-    """Process OCR text and return structured results."""
+def process_ocr(ocr_text: str) -> dict:
+    """Process OCR text and return structured results with validation.
+
+    Returns: {"accounts": [...], "errors": [...]}
+    """
+    errors = validate_ocr_input(ocr_text)
+    if errors:
+        return {
+            "accounts": [],
+            "errors": [str(e) for e in errors],
+        }
+
     accounts = parse_file(ocr_text)
+    if not accounts:
+        return {
+            "accounts": [],
+            "errors": ["No accounts found in input"],
+        }
+
     results = []
     for account in accounts:
         if "?" in account:
@@ -26,7 +42,7 @@ def process_ocr(ocr_text: str) -> list[dict]:
             "status": status,
             "valid": valid,
         })
-    return results
+    return {"accounts": results, "errors": []}
 
 
 class OCRHandler(http.server.SimpleHTTPRequestHandler):

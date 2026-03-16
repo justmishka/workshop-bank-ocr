@@ -246,7 +246,10 @@
 
         document.getElementById('parse-btn').addEventListener('click', async () => {
             const text = textarea.value;
-            if (!text.trim()) return;
+            if (!text.trim()) {
+                showError('Please paste OCR text or upload a file.');
+                return;
+            }
 
             try {
                 const res = await fetch('/api/parse', {
@@ -255,10 +258,13 @@
                     body: JSON.stringify({ text })
                 });
                 const data = await res.json();
-                renderResults(data);
+                if (data.errors && data.errors.length > 0) {
+                    showError(data.errors.join('\n'));
+                } else {
+                    renderResults(data.accounts);
+                }
             } catch (err) {
-                resultsList.innerHTML = '<div class="account-row err">Error connecting to server</div>';
-                resultsDiv.classList.add('visible');
+                showError('Error connecting to server.');
             }
         });
 
@@ -273,12 +279,24 @@
 
         document.getElementById('file-upload').addEventListener('change', (e) => {
             const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (ev) => { textarea.value = ev.target.result; };
-                reader.readAsText(file);
+            if (!file) return;
+            if (!file.name.match(/\.(txt|ocr)$/i)) {
+                showError('Please upload a .txt or .ocr file.');
+                e.target.value = '';
+                return;
             }
+            const reader = new FileReader();
+            reader.onload = (ev) => { textarea.value = ev.target.result; };
+            reader.readAsText(file);
         });
+
+        function showError(message) {
+            resultsList.innerHTML = `<div class="account-row err" style="border-left-color:#f87171">
+                <span style="color:#f87171">${message.replace(/\n/g, '<br>')}</span>
+            </div>`;
+            summaryDiv.innerHTML = '';
+            resultsDiv.classList.add('visible');
+        }
 
         function renderResults(data) {
             let html = '';
