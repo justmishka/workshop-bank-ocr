@@ -1,0 +1,18 @@
+[project]
+name = "bank-ocr"
+version = "0.1.0"
+description = "Workshop Product 01: Parse and validate machine-scanned account numbers"
+requires-python = ">=3.12"
+
+[project.scripts]
+bank-ocr = "src.main:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.coverage.run]
+source = ["src"]
+
+[tool.coverage.report]
+show_missing = true
