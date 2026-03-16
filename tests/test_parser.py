@@ -112,3 +112,55 @@ class TestParseFile:
     def test_empty_file(self):
         result = parse_file("")
         assert result == []
+
+
+class TestParseEntryEdgeCases:
+    """Dex QA — additional edge case tests."""
+
+    def test_entry_with_too_few_lines_raises(self):
+        with pytest.raises(ValueError, match="at least 3 lines"):
+            parse_entry(["   ", "  |"])
+
+    def test_all_twos(self):
+        lines = [
+            " _  _  _  _  _  _  _  _  _ ",
+            " _| _| _| _| _| _| _| _| _|",
+            "|_ |_ |_ |_ |_ |_ |_ |_ |_ ",
+        ]
+        assert parse_entry(lines) == "222222222"
+
+    def test_all_threes(self):
+        lines = [
+            " _  _  _  _  _  _  _  _  _ ",
+            " _| _| _| _| _| _| _| _| _|",
+            " _| _| _| _| _| _| _| _| _|",
+        ]
+        assert parse_entry(lines) == "333333333"
+
+    def test_all_fours(self):
+        lines = [
+            "                           ",
+            "|_||_||_||_||_||_||_||_||_|",
+            "  |  |  |  |  |  |  |  |  |",
+        ]
+        assert parse_entry(lines) == "444444444"
+
+    def test_all_fives(self):
+        lines = [
+            " _  _  _  _  _  _  _  _  _ ",
+            "|_ |_ |_ |_ |_ |_ |_ |_ |_ ",
+            " _| _| _| _| _| _| _| _| _|",
+        ]
+        assert parse_entry(lines) == "555555555"
+
+    def test_mixed_illegible_and_valid(self):
+        lines = [
+            " _  _  _  _  _  _  _  _  _ ",
+            "| || || || || || || || || |",
+            "|_||_||_||_||_||_||_||_||_|",
+        ]
+        # Corrupt middle digit
+        lines[1] = lines[1][:12] + "X" + lines[1][13:]
+        result = parse_entry(lines)
+        assert result[4] == "?"
+        assert result[0] == "0"
