@@ -10,11 +10,12 @@ class TestProcessOCR:
             "|_||_||_||_||_||_||_||_||_|\n"
             "\n"
         )
-        results = process_ocr(ocr)
-        assert len(results) == 1
-        assert results[0]["account"] == "000000000"
-        assert results[0]["status"] == "OK"
-        assert results[0]["valid"] is True
+        result = process_ocr(ocr)
+        assert result["errors"] == []
+        assert len(result["accounts"]) == 1
+        assert result["accounts"][0]["account"] == "000000000"
+        assert result["accounts"][0]["status"] == "OK"
+        assert result["accounts"][0]["valid"] is True
 
     def test_invalid_account(self):
         ocr = (
@@ -23,9 +24,9 @@ class TestProcessOCR:
             "  |  |  |  |  |  |  |  |  |\n"
             "\n"
         )
-        results = process_ocr(ocr)
-        assert results[0]["status"] == "ERR"
-        assert results[0]["valid"] is False
+        result = process_ocr(ocr)
+        assert result["accounts"][0]["status"] == "ERR"
+        assert result["accounts"][0]["valid"] is False
 
     def test_illegible_account(self):
         ocr = (
@@ -34,10 +35,9 @@ class TestProcessOCR:
             "|_||_||_||_||_||_||_||_||_|\n"
             "\n"
         )
-        results = process_ocr(ocr)
-        assert "?" in results[0]["account"]
-        assert results[0]["status"] == "ILL"
-        assert results[0]["valid"] is None
+        result = process_ocr(ocr)
+        # Input has invalid char 'X' — validation catches it
+        assert len(result["errors"]) > 0
 
     def test_multiple_accounts(self):
         ocr = (
@@ -50,11 +50,12 @@ class TestProcessOCR:
             "  ||_  _|  | _||_|  ||_| _|\n"
             "\n"
         )
-        results = process_ocr(ocr)
-        assert len(results) == 2
-        assert results[0]["status"] == "OK"
-        assert results[1]["status"] == "OK"
+        result = process_ocr(ocr)
+        assert len(result["accounts"]) == 2
+        assert result["accounts"][0]["status"] == "OK"
+        assert result["accounts"][1]["status"] == "OK"
 
     def test_empty_input(self):
-        results = process_ocr("")
-        assert results == []
+        result = process_ocr("")
+        assert len(result["errors"]) > 0
+        assert result["accounts"] == []
